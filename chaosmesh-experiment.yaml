@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: burn-cpu-yelb-ui-schedule
+spec:
+  schedule: '*/5 * * * *'
+  historyLimit: 2
+  concurrencyPolicy: 'Allow'
+  type: 'StressChaos'
+  stressChaos:
+    mode: all
+    selector:
+      namespaces:
+        - yelb
+      labelSelectors:
+        app: yelb-ui
+    stressors:
+      cpu:
+        workers: 2
+        load: 100
+        options: ["--cpu 2", "--timeout 300", "--hdd 1"]
+    duration: 6h
