@@ -3,7 +3,7 @@ kind: Schedule
 metadata:
   name: burn-cpu-yelb-ui-schedule
 spec:
-  schedule: '*/5 * * * *'
+  schedule: '*/30 {{CURRENT_HOUR_PLUS_ONE}} * * {{CURRENT_DAY_OF_WEEK}}'
   historyLimit: 2
   concurrencyPolicy: 'Allow'
   type: 'StressChaos'
@@ -19,4 +19,4 @@ spec:
         workers: 2
         load: 100
         options: ["--cpu 2", "--timeout 300", "--hdd 1"]
-    duration: 6h
+    duration: 30m
