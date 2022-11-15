@@ -1,0 +1,20 @@
+kind: StressChaos
+apiVersion: chaos-mesh.org/v1alpha1
+metadata:
+  namespace: yelb
+  name: burn-cpu-yelb-ui
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"chaos-mesh.org/v1alpha1","kind":"StressChaos","metadata":{"annotations":{},"name":"burn-cpu-yelb-ui","namespace":"yelb"},"spec":{"duration":"30m","mode":"all","selector":{"labelSelectors":{"app":"yelb-ui"},"namespaces":["yelb"]},"stressors":{"cpu":{"load":100,"workers":2}}}}
+spec:
+  selector:
+    namespaces:
+      - yelb
+    labelSelectors:
+      app: yelb-ui
+  mode: all
+  stressors:
+    cpu:
+      workers: 2
+      load: 100
+  duration: 30m
