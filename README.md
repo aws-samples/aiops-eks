@@ -1,13 +1,25 @@
-## My Project
+## AI Ops - EKS
 
-TODO: Fill this README out!
+This is part of the [Modernizing ITOps with AI/ML on AWS](https://catalog.workshops.aws/aiops/en-US) Workshop.
 
-Be sure to:
+In order to deploy all the components required for this workshop, we will need to download the code and required packages by following the steps below:
 
-* Change the title in this README
-* Edit your repository description on GitHub
+### Clone the repository
+In your [Cloud9 environment](https://console.aws.amazon.com/cloud9/) or [CloudShell](https://console.aws.amazon.com/cloudshell/home), enter the following command into the terminal to clone the repository into your environment:
 
-## Security
+```
+git clone https://github.com/aws-samples/aiops-eks.git
+```
+
+
+### Deploy CloudFormation stack for CloudWatch Anomaly
+
+
+```
+aws cloudformation create-stack --stack-name cloudwatchanomaly --template-body file://aiops-eks/deploy_workshop_cloudwatchanomaly.yml --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+```
+
+
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
 

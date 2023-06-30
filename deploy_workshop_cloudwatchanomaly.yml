@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CloudWatch Anomaly Detection
+Resources:
+  GameFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.lambda_handler
+      Runtime: python3.9
+      InlineCode:  |
+          import boto3
+          import random
+          import json
+          client = boto3.client('events')
+          lambda_client = boto3.client('lambda')
+          def lambda_handler(event, context):
+              cloudwatch = boto3.client('cloudwatch')
+              cloudwatch.put_metric_data(
+                  MetricData = [
+                      {
+                          'MetricName': 'TimeKPI',
+                          'Unit': 'None',
+                          'Value': random.randint(900, 1200)
+                      },
+                  ],
+                  Namespace = 'Game'
+              )
+              cloudwatch.put_metric_data(
+                  MetricData = [
+                      {
+                          'MetricName': 'SessionKPI',
+                          'Unit': 'None',
+                          'Value': random.randint(3, 4)
+                      },
+                  ],
+                  Namespace = 'Game'
+              )
+
+      AutoPublishAlias: live
+      Events:
+        CWSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+            Name: LambdaSchedule
+            Description: schedule-every-1-min
+      Policies:
+      - Statement:
+        - Sid: cwputmetrics
+          Effect: Allow
+          Action:
+          - cloudwatch:PutMetricData
+          Resource: '*'
+    Metadata:
+      SamResourceId: GameFunction
+  AnomalyDetectorOnGameTime:
+    Type: AWS::CloudWatch::AnomalyDetector
+    Properties:
+      MetricName: TimeKPI
+      Namespace: Game
+      Stat: Average
+    Metadata:
+      SamResourceId: AnomalyDetectorOnGameKPI
+  AnomalyDetectorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Game Time KPI
+      AlarmName: TimeKPIAlarm
+      ComparisonOperator: LessThanLowerOrGreaterThanUpperThreshold
+      EvaluationPeriods: 1
+      Metrics:
+      - Expression: ANOMALY_DETECTION_BAND(m1, 4)
+        Id: ad1
+      - Id: m1
+        MetricStat:
+          Metric:
+            MetricName: TimeKPI
+            Namespace: Game
+          Period: 60
+          Stat: Average
+      ThresholdMetricId: ad1
+      TreatMissingData: ignore
+    Metadata:
+      SamResourceId: AnomalyDetectorAlarm
