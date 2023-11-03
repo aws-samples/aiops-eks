@@ -14,4 +14,4 @@ spec:
     cpu:
       workers: 2
       load: 100
-  duration: 30m
+  duration: 60m
